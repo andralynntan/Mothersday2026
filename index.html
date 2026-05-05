@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Letter For You 🌸</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital@0;1&family=Dancing+Script:wght@500;700&display=swap');
+
+  :root {
+    --blush: #f7d6d0;
+    --rose: #e8a4a0;
+    --sage: #8fa87a;
+    --cream: #faf7f0;
+    --dusty-pink: #d4888a;
+    --sunflower: #e8b84b;
+    --periwinkle: #a8c4d8;
+    --text: #4a3f3f;
+    --text-light: #7a6a6a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lora', serif;
+    background-color: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .flowers-bg {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+
+  /* ── Screen 1 ── */
+  #screen-name {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem;
+    position: relative; z-index: 1;
+  }
+
+  .title-block {
+    text-align: center; margin-bottom: 2.2rem;
+    animation: fadeUp 1s ease both;
+  }
+  .title-block .eyebrow {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.25rem; color: var(--dusty-pink);
+    letter-spacing: 0.05em; margin-bottom: 0.5rem;
+  }
+  .title-block h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem,6vw,3.6rem);
+    font-weight: 400; color: var(--text); line-height: 1.15;
+  }
+  .title-block h1 em { color: var(--dusty-pink); font-style: italic; }
+
+  .name-card {
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(232,164,160,0.35);
+    border-radius: 24px; padding: 2.5rem 3rem;
+    max-width: 460px; width: 100%; text-align: center;
+    box-shadow: 0 8px 40px rgba(212,136,138,0.12);
+    animation: fadeUp 1.1s 0.2s ease both;
+  }
+  .name-card label {
+    display: block; font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem; color: var(--dusty-pink); margin-bottom: 1rem;
+  }
+  .name-card input {
+    width: 100%; border: none;
+    border-bottom: 2px solid var(--rose);
+    background: transparent;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; text-align: center;
+    color: var(--text); padding: 0.4rem 0;
+    outline: none; transition: border-color 0.3s;
+  }
+  .name-card input::placeholder { color: #cbb9b9; }
+  .name-card input:focus { border-color: var(--dusty-pink); }
+
+  .open-btn {
+    margin-top: 2rem; display: inline-block;
+    background: linear-gradient(135deg, var(--rose), var(--dusty-pink));
+    color: white; font-family: 'Dancing Script', cursive;
+    font-size: 1.4rem; border: none; border-radius: 50px;
+    padding: 0.75rem 2.8rem; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(212,136,138,0.35);
+    transition: transform 0.2s, box-shadow 0.2s; letter-spacing: 0.02em;
+  }
+  .open-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(212,136,138,0.45); }
+
+  /* ── Screen 1b ── */
+  #screen-relation {
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem;
+    position: relative; z-index: 1;
+  }
+  #screen-relation.visible { display: flex; }
+
+  .relation-card {
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(232,164,160,0.35);
+    border-radius: 24px; padding: 2.5rem 3rem;
+    max-width: 560px; width: 100%; text-align: center;
+    box-shadow: 0 8px 40px rgba(212,136,138,0.12);
+    animation: fadeUp 0.7s ease both;
+  }
+  .relation-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400; font-size: 1.65rem; color: var(--text); margin-bottom: 0.4rem;
+  }
+  .relation-card h2 em { color: var(--dusty-pink); font-style: italic; }
+  .relation-card .sub {
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--text-light); font-size: 0.95rem; margin-bottom: 1.8rem;
+  }
+
+  .relation-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.85rem; margin-bottom: 1.5rem;
+  }
+  .rel-btn {
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid rgba(212,136,138,0.28);
+    border-radius: 16px; padding: 1.2rem 0.8rem;
+    cursor: pointer; transition: all 0.22s; text-align: center;
+  }
+  .rel-btn:hover {
+    border-color: var(--dusty-pink);
+    background: rgba(247,214,208,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(212,136,138,0.18);
+  }
+  .rel-btn.selected {
+    border-color: var(--dusty-pink);
+    background: linear-gradient(135deg,rgba(247,214,208,0.5),rgba(212,197,232,0.28));
+    box-shadow: 0 4px 20px rgba(212,136,138,0.22);
+  }
+  .rel-btn .rel-icon { display: block; margin: 0 auto 0.5rem; }
+  .rel-btn .rel-name {
+    font-family: 'Playfair Display', serif; font-size: 1.05rem;
+    font-weight: 600; display: block; margin-bottom: 0.2rem; color: var(--text);
+  }
+  .rel-btn.selected .rel-name { color: var(--dusty-pink); }
+  .rel-btn .rel-desc {
+    font-size: 0.78rem; font-style: italic;
+    color: var(--text-light); display: block; line-height: 1.4;
+    font-family: 'Lora', serif;
+  }
+  .back-link {
+    background: none; border: none;
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--text-light); font-size: 0.9rem;
+    cursor: pointer; text-decoration: underline;
+    margin-top: 0.5rem; display: block;
+  }
+  .back-link:hover { color: var(--dusty-pink); }
+
+  /* ── Screen 2 ── */
+  #screen-letter {
+    display: none; min-height: 100vh; padding: 3rem 1.5rem;
+    position: relative; z-index: 1;
+    align-items: center; justify-content: center; flex-direction: column;
+  }
+  #screen-letter.visible { display: flex; }
+
+  .letter-wrap { max-width: 680px; width: 100%; }
+
+  .letter-paper {
+    background: rgba(255,253,248,0.93);
+    border: 1.5px solid rgba(232,164,160,0.28); border-radius: 4px;
+    padding: 3.5rem 4rem;
+    box-shadow: 0 2px 0 rgba(200,180,180,0.15), 0 12px 60px rgba(180,140,140,0.14), inset 0 0 80px rgba(245,230,200,0.1);
+    position: relative; animation: paperReveal 0.8s ease both;
+    background-image: repeating-linear-gradient(transparent,transparent 31px,rgba(232,200,200,0.16) 31px,rgba(232,200,200,0.16) 32px);
+    background-position: 0 58px; line-height: 32px;
+  }
+  .letter-paper::before {
+    content: ''; position: absolute;
+    left: 72px; top: 0; bottom: 0;
+    border-left: 1.5px solid rgba(212,136,138,0.15);
+  }
+  .letter-date {
+    font-family: 'Dancing Script', cursive; font-size: 1rem;
+    color: var(--text-light); text-align: right; margin-bottom: 1.5rem;
+    display: block; opacity: 0; transition: opacity 0.6s;
+  }
+  .letter-salutation {
+    font-family: 'Playfair Display', serif; font-size: 1.55rem;
+    font-style: italic; color: var(--dusty-pink); margin-bottom: 1.2rem;
+    opacity: 0; transition: opacity 0.6s 0.4s;
+  }
+  .letter-body {
+    font-family: 'Lora', serif; font-size: 1.05rem;
+    line-height: 2rem; color: var(--text); white-space: pre-wrap; min-height: 200px;
+  }
+  .letter-sign {
+    margin-top: 2rem; text-align: right;
+    font-family: 'Dancing Script', cursive; font-size: 1.4rem;
+    color: var(--dusty-pink); opacity: 0; transition: opacity 1s;
+  }
+  .cursor {
+    display: inline-block; width: 2px; height: 1.1em;
+    background: var(--dusty-pink); vertical-align: middle;
+    animation: blink 0.75s step-end infinite; margin-left: 1px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .bouquet-top {
+    display: flex; justify-content: center;
+    margin-bottom: -10px; position: relative; z-index: 2;
+  }
+  .bouquet-top svg {
+    filter: drop-shadow(0 4px 16px rgba(212,136,138,0.2));
+    animation: floatBouquet 4s ease-in-out infinite;
+  }
+  @keyframes floatBouquet { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .petal {
+    position: fixed; top: -40px;
+    animation: petalFall linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes petalFall {
+    0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:.7}
+    100%{transform:translateY(110vh) rotate(360deg) translateX(50px);opacity:0}
+  }
+
+  .restart-btn {
+    margin-top: 1.5rem; background: transparent;
+    border: 1.5px solid var(--rose); color: var(--dusty-pink);
+    font-family: 'Dancing Script', cursive; font-size: 1.1rem;
+    padding: 0.5rem 1.8rem; border-radius: 50px; cursor: pointer; transition: background 0.2s;
+  }
+  .restart-btn:hover { background: rgba(232,164,160,0.15); }
+
+  .download-btn {
+    margin-top: 0.8rem; background: transparent;
+    border: 1.5px solid var(--sage); color: var(--sage);
+    font-family: 'Dancing Script', cursive; font-size: 1.1rem;
+    padding: 0.5rem 1.8rem; border-radius: 50px; cursor: pointer;
+    transition: background 0.2s, color 0.2s; display: flex;
+    align-items: center; gap: 0.4rem;
+  }
+  .download-btn:hover { background: rgba(143,168,122,0.12); }
+  .download-btn.loading { opacity: 0.6; pointer-events: none; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes paperReveal { from{opacity:0;transform:scale(0.97) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+  @media(max-width:600px){
+    .letter-paper{padding:2.5rem 1.8rem}
+    .letter-paper::before{display:none}
+    .relation-card,.name-card{padding:2rem 1.5rem}
+  }
+</style>
+</head>
+<body>
+
+<div id="petals"></div>
+
+<!-- ══ BOTANICAL BACKGROUND ══ -->
+<div class="flowers-bg">
+<svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- TOP LEFT: Sunflowers -->
+  <g transform="translate(52,110)" opacity=".82">
+    <path d="M0 0 Q-3 28 -2 68" stroke="#8fa87a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M-2 44 Q-22 37 -26 24 Q-10 28 -2 44Z" fill="#8fa87a"/>
+    <path d="M-2 54 Q15 47 18 35 Q4 40 -2 54Z" fill="#8fa87a"/>
+    <g transform="translate(0,-4)">
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(315)"/>
+      <circle cx="0" cy="0" r="12" fill="#5c3d1e"/>
+      <circle cx="0" cy="0" r="7" fill="#7a5230"/>
+    </g>
+    <g transform="translate(32,-18) scale(0.68)">
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-20" rx="6" ry="14" fill="#e8b84b" transform="rotate(315)"/>
+      <circle cx="0" cy="0" r="12" fill="#5c3d1e"/>
+    </g>
+  </g>
+
+  <!-- TOP LEFT UPPER: Strawberries -->
+  <g transform="translate(155,48)" opacity=".8">
+    <g>
+      <path d="M0-18 Q14-10 14 5 Q14 20 0 28 Q-14 20-14 5 Q-14-10 0-18Z" fill="#d94f3d"/>
+      <path d="M-8-20 Q0-30 8-20" fill="#8fa87a"/>
+      <circle cx="-4" cy="0" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="5" cy="-5" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="2" cy="9" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="-6" cy="11" r="1.5" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="7" cy="4" r="1.5" fill="#f5e0c0" opacity=".9"/>
+    </g>
+    <g transform="translate(28,14)">
+      <path d="M0-18 Q14-10 14 5 Q14 20 0 28 Q-14 20-14 5 Q-14-10 0-18Z" fill="#d94f3d"/>
+      <path d="M-8-20 Q0-30 8-20" fill="#8fa87a"/>
+      <circle cx="-4" cy="0" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="5" cy="-5" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="2" cy="9" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="7" cy="4" r="1.5" fill="#f5e0c0" opacity=".9"/>
+    </g>
+    <g transform="translate(12,38)">
+      <path d="M0-18 Q14-10 14 5 Q14 20 0 28 Q-14 20-14 5 Q-14-10 0-18Z" fill="#d94f3d"/>
+      <path d="M-8-20 Q0-30 8-20" fill="#8fa87a"/>
+      <circle cx="-4" cy="0" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="5" cy="-5" r="1.8" fill="#f5e0c0" opacity=".9"/>
+      <circle cx="2" cy="9" r="1.8" fill="#f5e0c0" opacity=".9"/>
+    </g>
+  </g>
+
+  <!-- TOP RIGHT: Peach 5-petal blooms -->
+  <g transform="translate(1352,85)" opacity=".82">
+    <path d="M0 0 Q2 26 4 60" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M4 38 Q22 30 26 18 Q12 22 4 38Z" fill="#8fa87a"/>
+    <path d="M4 50 Q-14 42-18 30 Q-4 36 4 50Z" fill="#8fa87a"/>
+    <g transform="translate(0,-2)">
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="8" fill="#d4888a"/>
+      <circle cx="0" cy="0" r="4" fill="#b86060" opacity=".7"/>
+    </g>
+    <g transform="translate(-34,12) scale(0.62)">
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-22" rx="12" ry="18" fill="#f2c4b4" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="8" fill="#d4888a"/>
+    </g>
+  </g>
+
+  <!-- TOP CENTER: Seed packets -->
+  <g transform="translate(675,28)" opacity=".7">
+    <g transform="rotate(-8)">
+      <rect x="-20" y="-30" width="38" height="46" rx="4" fill="#f5e6c8" stroke="#d4c8a0" stroke-width="1.2"/>
+      <rect x="-16" y="-26" width="30" height="8" rx="2" fill="#e8d4a0" opacity=".6"/>
+      <g transform="translate(3,4) scale(0.6)">
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#d4888a" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#d4888a" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#d4888a" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#d4888a" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#d4888a" transform="rotate(288)"/>
+        <circle cx="0" cy="0" r="5" fill="#e8b84b"/>
+      </g>
+      <ellipse cx="-8" cy="18" rx="2.5" ry="4" fill="#5c3d1e" opacity=".65" transform="rotate(20 -8 18)"/>
+      <ellipse cx="4" cy="20" rx="2.5" ry="4" fill="#5c3d1e" opacity=".65" transform="rotate(-15 4 20)"/>
+      <ellipse cx="14" cy="22" rx="2" ry="3.5" fill="#5c3d1e" opacity=".6" transform="rotate(10 14 22)"/>
+    </g>
+    <g transform="translate(30,8) rotate(10)">
+      <rect x="-20" y="-30" width="38" height="46" rx="4" fill="#f5e6c8" stroke="#d4c8a0" stroke-width="1.2"/>
+      <rect x="-16" y="-26" width="30" height="8" rx="2" fill="#e8d4a0" opacity=".6"/>
+      <g transform="translate(3,4) scale(0.62)">
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#e8a4a0" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#e8a4a0" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#e8a4a0" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#e8a4a0" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-10" rx="6" ry="9" fill="#e8a4a0" transform="rotate(288)"/>
+        <circle cx="0" cy="0" r="5" fill="#d4888a"/>
+      </g>
+      <ellipse cx="-6" cy="20" rx="2.5" ry="4" fill="#5c3d1e" opacity=".65" transform="rotate(-10 -6 20)"/>
+      <ellipse cx="6" cy="18" rx="2" ry="3.5" fill="#5c3d1e" opacity=".6" transform="rotate(15 6 18)"/>
+    </g>
+  </g>
+
+  <!-- TOP RIGHT corner: herb sprig -->
+  <g transform="translate(1252,55)" opacity=".62">
+    <path d="M0 0 Q10 22 8 52" stroke="#8fa87a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M8 14 Q26 6 28-6 Q14 0 8 14Z" fill="#8fa87a"/>
+    <path d="M8 30 Q-10 22-12 10 Q4 16 8 30Z" fill="#8fa87a"/>
+    <path d="M8 46 Q26 38 26 26 Q12 32 8 46Z" fill="#8fa87a"/>
+  </g>
+
+  <!-- MID LEFT: Forget-me-nots -->
+  <g transform="translate(28,435)" opacity=".8">
+    <path d="M0 62 Q-4 32 0 0" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M0 20 Q-18 14-22 2 Q-8 6 0 20Z" fill="#8fa87a"/>
+    <path d="M0 38 Q18 30 20 18 Q6 24 0 38Z" fill="#8fa87a"/>
+    <g transform="translate(0,0)">
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(300)"/>
+      <circle cx="0" cy="0" r="6" fill="white"/>
+      <circle cx="0" cy="0" r="3" fill="#f5e6c8"/>
+    </g>
+    <g transform="translate(24,30) scale(0.72)">
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-14" rx="8" ry="13" fill="#a8c4d8" transform="rotate(300)"/>
+      <circle cx="0" cy="0" r="6" fill="white"/>
+      <circle cx="0" cy="0" r="3" fill="#f5e6c8"/>
+    </g>
+  </g>
+
+  <!-- MID RIGHT: White wildflower spray -->
+  <g transform="translate(1402,390)" opacity=".72">
+    <path d="M0 80 Q4 50 2 20 Q6 5 10-10" stroke="#b8c9a3" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M2 20 Q-14 14-18 4 Q-4 8 2 20Z" fill="#b8c9a3"/>
+    <path d="M4 40 Q20 34 22 22 Q8 28 4 40Z" fill="#b8c9a3"/>
+    <g transform="translate(10,-12) scale(0.62)">
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="5" fill="#f5e6c8"/>
+    </g>
+    <g transform="translate(-15,16) scale(0.5)">
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="5" fill="#f5e6c8"/>
+    </g>
+    <g transform="translate(20,40) scale(0.54)">
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-12" rx="7" ry="11" fill="#f0ede6" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="5" fill="#f5e6c8"/>
+    </g>
+  </g>
+
+  <!-- MID RIGHT: Ladybirds -->
+  <g transform="translate(1376,555)" opacity=".78">
+    <g>
+      <ellipse cx="0" cy="0" rx="17" ry="15" fill="#d94f3d"/>
+      <path d="M-17 0 Q0-19 17 0" fill="#2a1a1a"/>
+      <circle cx="0" cy="-2" r="3.5" fill="#2a1a1a"/>
+      <line x1="0" y1="-15" x2="0" y2="15" stroke="#2a1a1a" stroke-width="1.8"/>
+      <circle cx="-7" cy="5" r="3.5" fill="#2a1a1a"/>
+      <circle cx="7" cy="5" r="3.5" fill="#2a1a1a"/>
+      <circle cx="-8" cy="-4" r="2.5" fill="#2a1a1a"/>
+      <circle cx="8" cy="-4" r="2.5" fill="#2a1a1a"/>
+    </g>
+    <g transform="translate(32,15)">
+      <ellipse cx="0" cy="0" rx="15" ry="13" fill="#d94f3d"/>
+      <path d="M-15 0 Q0-17 15 0" fill="#2a1a1a"/>
+      <circle cx="0" cy="-2" r="3" fill="#2a1a1a"/>
+      <line x1="0" y1="-13" x2="0" y2="13" stroke="#2a1a1a" stroke-width="1.6"/>
+      <circle cx="-6" cy="4" r="3" fill="#2a1a1a"/>
+      <circle cx="6" cy="4" r="3" fill="#2a1a1a"/>
+      <circle cx="-7" cy="-3" r="2" fill="#2a1a1a"/>
+    </g>
+  </g>
+
+  <!-- BOTTOM LEFT: Blackberries -->
+  <g transform="translate(52,798)" opacity=".8">
+    <path d="M10 18 Q-12 8-16-6 Q0 0 10 18Z" fill="#8fa87a"/>
+    <path d="M32 14 Q52 4 52-10 Q38-2 32 14Z" fill="#8fa87a"/>
+    <g>
+      <circle cx="0" cy="0" r="17" fill="#2d2235"/>
+      <circle cx="-6" cy="-6" r="8" fill="#3d2f48"/>
+      <circle cx="6" cy="-6" r="8" fill="#3d2f48"/>
+      <circle cx="-8" cy="5" r="8" fill="#3d2f48"/>
+      <circle cx="4" cy="7" r="8" fill="#3d2f48"/>
+      <circle cx="-5" cy="-5" r="4" fill="#4a3858" opacity=".55"/>
+      <circle cx="5" cy="-5" r="4" fill="#4a3858" opacity=".55"/>
+    </g>
+    <g transform="translate(32,10)">
+      <circle cx="0" cy="0" r="16" fill="#2d2235"/>
+      <circle cx="-5" cy="-5" r="7" fill="#3d2f48"/>
+      <circle cx="5" cy="-5" r="7" fill="#3d2f48"/>
+      <circle cx="-6" cy="5" r="7" fill="#3d2f48"/>
+      <circle cx="4" cy="5" r="7" fill="#3d2f48"/>
+    </g>
+    <g transform="translate(16,-20) scale(0.78)">
+      <circle cx="0" cy="0" r="16" fill="#2d2235"/>
+      <circle cx="-5" cy="-5" r="7" fill="#3d2f48"/>
+      <circle cx="5" cy="-5" r="7" fill="#3d2f48"/>
+      <circle cx="0" cy="6" r="7" fill="#3d2f48"/>
+    </g>
+  </g>
+
+  <!-- BOTTOM CENTER: Bluebells -->
+  <g transform="translate(700,842)" opacity=".78">
+    <path d="M0 0 Q0-28 0-68" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M0-48 Q-17-48-19-36 Q-17-24-9-22 Q-3-24 0-28 Q0-48 0-48Z" fill="#f2c4b4"/>
+    <path d="M-9-22 Q-9-18-11-14" stroke="#8fa87a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M0-60 Q17-60 19-48 Q17-36 9-34 Q3-36 0-40 Q0-60 0-60Z" fill="#f2c4b4"/>
+    <path d="M9-34 Q9-30 11-26" stroke="#8fa87a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M0-68 Q-10-78-8-88 Q-2-76 0-68Z" fill="#8fa87a"/>
+    <path d="M0-70 Q10-80 8-90 Q2-78 0-70Z" fill="#8fa87a"/>
+  </g>
+
+  <!-- BOTTOM LEFT: Daisy cluster -->
+  <g transform="translate(272,818)" opacity=".78">
+    <path d="M0 52 Q-2 22 4-4" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M22 52 Q24 22 26-4" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M4 32 Q-14 22-16 10 Q-2 16 4 32Z" fill="#8fa87a"/>
+    <path d="M26 28 Q42 20 42 8 Q28 16 26 28Z" fill="#8fa87a"/>
+    <g transform="translate(0,-8)">
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(330)"/>
+      <circle cx="0" cy="0" r="10" fill="#e8b84b"/>
+      <circle cx="0" cy="0" r="6" fill="#d4a030"/>
+    </g>
+    <g transform="translate(26,-5) scale(0.82)">
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-15" rx="5" ry="13" fill="white" transform="rotate(330)"/>
+      <circle cx="0" cy="0" r="10" fill="#e8b84b"/>
+      <circle cx="0" cy="0" r="6" fill="#d4a030"/>
+    </g>
+  </g>
+
+  <!-- BOTTOM RIGHT: Yellow tulips -->
+  <g transform="translate(1368,818)" opacity=".82">
+    <path d="M0 62 Q-2 32 0 2" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M22 65 Q24 35 26 5" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M44 56 Q46 26 46-4" stroke="#8fa87a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M0 36 Q-18 26-20 14 Q-6 20 0 36Z" fill="#8fa87a"/>
+    <path d="M26 40 Q42 30 42 18 Q28 26 26 40Z" fill="#8fa87a"/>
+    <g transform="translate(0,0)">
+      <path d="M-11 0 Q-13-17 0-25 Q13-17 11 0Z" fill="#e8b84b"/>
+      <path d="M0-25 Q-5-34-9-32 Q-13-23-11 0Z" fill="#d4a030"/>
+      <path d="M0-25 Q5-34 9-32 Q13-23 11 0Z" fill="#d4a030"/>
+    </g>
+    <g transform="translate(26,2)">
+      <path d="M-11 0 Q-13-17 0-25 Q13-17 11 0Z" fill="#e8b84b"/>
+      <path d="M0-25 Q-5-34-9-32 Q-13-23-11 0Z" fill="#d4a030"/>
+      <path d="M0-25 Q5-34 9-32 Q13-23 11 0Z" fill="#d4a030"/>
+    </g>
+    <g transform="translate(46,-8) scale(0.84)">
+      <path d="M-11 0 Q-13-17 0-25 Q13-17 11 0Z" fill="#e8b84b"/>
+      <path d="M0-25 Q-5-34-9-32 Q-13-23-11 0Z" fill="#d4a030"/>
+      <path d="M0-25 Q5-34 9-32 Q13-23 11 0Z" fill="#d4a030"/>
+    </g>
+  </g>
+
+  <!-- BOTTOM RIGHT extra leaf -->
+  <g transform="translate(1432,775)" opacity=".5">
+    <path d="M0 30 Q4 10 2-10" stroke="#b8c9a3" stroke-width="2" fill="none"/>
+    <path d="M2 10 Q16 2 16-10 Q4-2 2 10Z" fill="#b8c9a3"/>
+    <path d="M2 22 Q-12 14-12 2 Q0 10 2 22Z" fill="#b8c9a3"/>
+  </g>
+
+</svg>
+</div>
+
+<!-- ══ SCREEN 1: Name ══ -->
+<div id="screen-name">
+  <div class="title-block">
+    <div class="eyebrow">With love and all my heart, Andra 🌸</div>
+    <h1>A little something<br>for the <em>remarkable</em> women<br>in my life</h1>
+  </div>
+  <div class="name-card">
+    <label for="nameInput">What is your name?</label>
+    <input type="text" id="nameInput" placeholder="Your name here…" autocomplete="off" maxlength="40"/>
+    <button class="open-btn" onclick="goToRelation()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 1b: Relationship ══ -->
+<div id="screen-relation">
+  <div class="relation-card">
+    <h2>Andra is your…</h2>
+    <p class="sub">So your letter can speak to your special connection with her.</p>
+
+    <div class="relation-grid">
+
+      <button class="rel-btn" onclick="selectRelation('family')" id="rel-family">
+        <svg class="rel-icon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 46 Q25 30 26 20" stroke="#8fa87a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M26 34 Q15 29 13 20 Q22 24 26 34Z" fill="#8fa87a"/>
+          <path d="M17 7 Q26-4 35 7 Q33 20 26 22 Q19 20 17 7Z" fill="#d4888a"/>
+          <path d="M17 7 Q15 1 19 1 Q23 1 26 7Z" fill="#c07070"/>
+          <path d="M35 7 Q37 1 33 1 Q29 1 26 7Z" fill="#c07070"/>
+        </svg>
+        <span class="rel-name">Family</span>
+        <span class="rel-desc">You are family to Andra —<br>her mum, gran, sister, or aunt</span>
+      </button>
+
+      <button class="rel-btn" onclick="selectRelation('friend')" id="rel-friend">
+        <svg class="rel-icon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 46 Q25 32 26 22" stroke="#8fa87a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M26 36 Q15 31 13 23 Q22 27 26 36Z" fill="#8fa87a"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(0 26 17)"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(60 26 17)"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(120 26 17)"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(180 26 17)"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(240 26 17)"/>
+          <ellipse cx="26" cy="17" rx="9" ry="13" fill="#a8c4d8" transform="rotate(300 26 17)"/>
+          <circle cx="26" cy="17" r="6" fill="white"/>
+          <circle cx="26" cy="17" r="3" fill="#f5e6c8"/>
+        </svg>
+        <span class="rel-name">Friend</span>
+        <span class="rel-desc">You are a dear friend<br>who feels like home to Andra</span>
+      </button>
+
+      <button class="rel-btn" onclick="selectRelation('mentor')" id="rel-mentor">
+        <svg class="rel-icon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 46 Q25 32 26 24" stroke="#8fa87a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M26 38 Q15 32 13 24 Q22 30 26 38Z" fill="#8fa87a"/>
+          <path d="M26 40 Q37 34 39 26 Q30 32 26 40Z" fill="#8fa87a"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(0 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(45 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(90 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(135 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(180 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(225 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(270 26 19)"/>
+          <ellipse cx="26" cy="19" rx="6" ry="12" fill="#e8b84b" transform="rotate(315 26 19)"/>
+          <circle cx="26" cy="19" r="9" fill="#5c3d1e"/>
+          <circle cx="26" cy="19" r="5" fill="#7a5230"/>
+        </svg>
+        <span class="rel-name">Mentor</span>
+        <span class="rel-desc">You have guided and<br>inspired Andra</span>
+      </button>
+
+      <button class="rel-btn" onclick="selectRelation('colleague')" id="rel-colleague">
+        <svg class="rel-icon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 46 Q25 32 26 24" stroke="#8fa87a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M26 36 Q15 30 13 22 Q22 28 26 36Z" fill="#8fa87a"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(0 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(30 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(60 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(90 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(120 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(150 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(180 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(210 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(240 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(270 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(300 26 18)"/>
+          <ellipse cx="26" cy="18" rx="5" ry="13" fill="white" transform="rotate(330 26 18)"/>
+          <circle cx="26" cy="18" r="8" fill="#e8b84b"/>
+          <circle cx="26" cy="18" r="5" fill="#d4a030"/>
+        </svg>
+        <span class="rel-name">Colleague</span>
+        <span class="rel-desc">You work alongside<br>Andra every day</span>
+      </button>
+
+    </div>
+
+    <button class="open-btn" onclick="openLetter()" id="revealBtn" style="opacity:0.42;pointer-events:none;">
+      Open Your Letter 🌷
+    </button>
+    <button class="back-link" onclick="goBack()">← Change name</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: Letter ══ -->
+<div id="screen-letter">
+
+  <div class="bouquet-top">
+    <svg width="320" height="230" viewBox="0 0 320 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M130 200 Q160 215 190 200 L185 175 Q160 188 135 175Z" fill="#f7d6d0" stroke="#d4888a" stroke-width="1.2"/>
+      <path d="M148 195 Q160 205 172 195" stroke="#d4888a" stroke-width="1" fill="none"/>
+      <path d="M160 195 Q158 160 155 130" stroke="#8fa87a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M160 195 Q170 155 175 120" stroke="#8fa87a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M160 195 Q145 155 140 115" stroke="#8fa87a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M160 195 Q180 160 192 128" stroke="#8fa87a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M160 195 Q135 160 125 125" stroke="#8fa87a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M160 195 Q196 165 206 140" stroke="#8fa87a" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M160 195 Q118 162 112 138" stroke="#8fa87a" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M152 165 Q140 155 138 142 Q150 148 152 165Z" fill="#8fa87a" opacity=".8"/>
+      <path d="M168 158 Q180 148 184 136 Q172 142 168 158Z" fill="#8fa87a" opacity=".8"/>
+      <!-- center rose -->
+      <g transform="translate(155,95)">
+        <circle cx="0" cy="0" r="22" fill="#e8a4a0" opacity=".3"/>
+        <path d="M0-18 Q8-10 6 0 Q8 10 0 18 Q-8 10-6 0 Q-8-10 0-18Z" fill="#e8a4a0"/>
+        <path d="M-18 0 Q-10-8 0-6 Q10-8 18 0 Q10 8 0 6 Q-10 8-18 0Z" fill="#d4888a" opacity=".7"/>
+        <path d="M-12-12 Q-4-14 0-8 Q-4-2-12 0 Q-14-6-12-12Z" fill="#f7d6d0" opacity=".8"/>
+        <circle cx="0" cy="0" r="7" fill="#c97070" opacity=".6"/>
+        <circle cx="0" cy="0" r="3" fill="#a85050" opacity=".5"/>
+      </g>
+      <!-- forget-me-not left -->
+      <g transform="translate(125,80)">
+        <ellipse cx="0" cy="-16" rx="10" ry="16" fill="#a8c4d8"/>
+        <ellipse cx="14" cy="-8" rx="10" ry="16" fill="#a8c4d8" transform="rotate(60)"/>
+        <ellipse cx="14" cy="8" rx="10" ry="16" fill="#a8c4d8" transform="rotate(120)"/>
+        <ellipse cx="0" cy="16" rx="10" ry="16" fill="#a8c4d8" transform="rotate(180)"/>
+        <ellipse cx="-14" cy="8" rx="10" ry="16" fill="#a8c4d8" transform="rotate(240)"/>
+        <ellipse cx="-14" cy="-8" rx="10" ry="16" fill="#a8c4d8" transform="rotate(300)"/>
+        <circle cx="0" cy="0" r="7" fill="white"/>
+        <circle cx="0" cy="0" r="3" fill="#f5e6c8"/>
+      </g>
+      <!-- sunflower right -->
+      <g transform="translate(192,78)">
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-14" rx="7" ry="13" fill="#e8b84b" transform="rotate(315)"/>
+        <circle cx="0" cy="0" r="8" fill="#5c3d1e"/>
+        <circle cx="0" cy="0" r="4" fill="#7a5230"/>
+      </g>
+      <!-- daisy far left -->
+      <g transform="translate(108,115)">
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(36)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(108)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(252)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(288)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="9" fill="white" transform="rotate(324)"/>
+        <circle cx="0" cy="0" r="7" fill="#e8b84b"/>
+      </g>
+      <!-- pink bloom far right -->
+      <g transform="translate(208,118)">
+        <ellipse cx="0" cy="-13" rx="8" ry="11" fill="#f2c4b4" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-13" rx="8" ry="11" fill="#f2c4b4" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-13" rx="8" ry="11" fill="#f2c4b4" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-13" rx="8" ry="11" fill="#f2c4b4" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-13" rx="8" ry="11" fill="#f2c4b4" transform="rotate(288)"/>
+        <circle cx="0" cy="0" r="6" fill="#d4888a"/>
+        <circle cx="0" cy="0" r="3" fill="#b86060" opacity=".7"/>
+      </g>
+      <!-- ribbon bow -->
+      <path d="M148 208 Q145 202 138 206 Q135 212 142 214 Q148 212 148 208Z" fill="#d4888a" opacity=".6"/>
+      <path d="M172 208 Q175 202 182 206 Q185 212 178 214 Q172 212 172 208Z" fill="#d4888a" opacity=".6"/>
+      <path d="M148 210 Q160 218 172 210" stroke="#d4888a" stroke-width="1.5" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="letter-wrap">
+    <div class="letter-paper">
+      <span class="letter-date" id="letterDate"></span>
+      <div class="letter-salutation" id="letterSalutation"></div>
+      <div class="letter-body" id="letterBody"><span class="cursor"></span></div>
+      <div class="letter-sign" id="letterSign">With all my love 🌷<br>Andra</div>
+    </div>
+  </div>
+
+  <button class="restart-btn" onclick="restart()">← Send to someone else</button>
+  <button class="download-btn" id="downloadBtn" onclick="downloadLetter()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Save as image
+  </button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+const letterBank = {
+  family: [
+    `There is a particular kind of love that only family knows — the kind that doesn't need explaining, that exists before words and carries on long after they run out. You have always embodied that love for me.
+
+I think of all the small moments that made up my world: the warmth of coming home, the comfort of your presence, the quiet certainty that I was held. Those things were never small, even when they felt ordinary. They were everything.
+
+On this Mother's Day, I want to say what doesn't always get said — thank you. Thank you for the love that was unconditional, the patience that never ran dry, the way you made me feel seen even on the days I found it hardest to see myself.
+
+You are the root of so much that is good in me. I hope you feel that today, and every day that follows.`,
+
+    `Home, to me, has always had your face in it. Not a place — you. The particular warmth of being near you, the way everything feels a little softer and a little safer when you are in the room.
+
+I have been shaped by you in ways I am still discovering. The way I love, the way I show up, the way I find beauty in small things — so much of that came from watching you.
+
+This Mother's Day, I'm sitting with gratitude that is too large for any card. So I'll just say this: you are cherished. Deeply, completely, in ways that time only deepens.
+
+I love you more than these words can hold.`,
+
+    `There are things I learned long before I knew I was learning them — what kindness looks like in practice, how to hold someone gently through a hard thing, how to love without keeping score. I learned them all from you.
+
+Family isn't just blood, but when it is blood, when it is bone-deep and lifelong, it is something extraordinary. What we have is extraordinary.
+
+On this Mother's Day, I just want you to know: the life you have poured into the people around you has not been wasted. It has grown into something beautiful. It has grown into us.
+
+Thank you for being the kind of woman worth growing up beside. I am so proud to call you mine.`
+  ],
+
+  friend: [
+    `There is a category of friendship that defies easy description — the kind that feels chosen in the truest sense, where something in you simply recognised something in them and decided: yes, this one.
+
+That is what I feel with you.
+
+You have held space for me in ways I didn't always know how to ask for. You have shown up, laughed with me, sat with me in the difficult parts, and never once made me feel like too much. That is a rare and precious gift.
+
+On this Mother's Day, I want to celebrate not just the mother you are, but the woman — my friend. The one who makes this life richer and warmer and more wonderful just by being in it.
+
+You deserve every beautiful thing today brings.`,
+
+    `Friendships like ours are the ones that make a life feel full. The ones you look back on and think — yes, that. That was the good part.
+
+I think of all the conversations, the laughter, the moments where we said exactly the right thing or said nothing and it was still enough. I think of how easy it is to be around you, and how rare that ease actually is.
+
+This Mother's Day, I'm thinking of the kind of love you carry — for your children, for the people lucky enough to be in your circle, for the world you move through with such grace. It is something to behold.
+
+Thank you for being my person. I hope today gives you everything you give to everyone else.`,
+
+    `You know that feeling when someone just gets you? When you don't have to explain the punchline or soften the edges of a thought? That's what our friendship is. That's what you are to me.
+
+I don't say it enough — how much I value you. How much the small moments between us add up to something I couldn't imagine being without. Your laughter. Your honesty. The particular way you see things that makes me see them differently too.
+
+Happy Mother's Day to one of the finest humans I know. Today is for you — for resting, for being celebrated, for receiving a little of what you put out into the world so generously.
+
+You are so deeply loved.`
+  ],
+
+  mentor: [
+    `There are people who change the direction of your life simply by believing in you — who see something in you before you have learned to see it in yourself. Andra is one of those people, and this is her way of telling you she sees it.
+
+The guidance you have offered was never just professional. It was human. You listened when listening wasn't required. You were honest when honesty took courage. You invested in the becoming of others long before there was any obvious return on that investment.
+
+On this Mother's Day, I want to acknowledge not just what you have taught, but who you are. The steadiness, the wisdom, the particular warmth you bring to every room — it has left a lasting mark.
+
+Thank you for seeing people. That gift carries further than you know.`,
+
+    `Mentorship, at its best, is a kind of love — and you have always understood that. You never just taught skills or strategies. You taught how to trust oneself, how to move through difficulty with grace, how to hold onto what matters.
+
+Watching you has been its own education. The way you lead, the care with which you treat people, the integrity that shows up in small decisions as much as large ones — it does not go unnoticed.
+
+This Mother's Day, I hope you feel the ripple of everything you have put into the people around you. That ripple is wide and deep and it reaches further than you know.
+
+Thank you for the gift of your time, your wisdom, and your belief.`,
+
+    `You were found at exactly the right moment. And what you gave wasn't just advice — it was perspective. The kind that settles something in you and makes the path ahead feel a little less uncertain.
+
+You have made people braver. More confident in their own voice. More willing to take up space. That is a quiet, extraordinary kind of power — and you wield it with such grace.
+
+On this Mother's Day, I want to say it plainly: you have shaped lives. And there is so much gratitude for the shape they have taken because of you.
+
+Wishing you a day that reflects all the light you have given out.`
+  ],
+
+  colleague: [
+    `There's something particular about the people you work alongside — you spend more waking hours with them than almost anyone, and the ones who do it with warmth and humanity make every day genuinely better.
+
+You are one of those people.
+
+The way you show up — thoughtful, generous, funny at exactly the right moment — makes work feel like something more than work. You have created connection and lightness in places that can sometimes feel heavy, and that matters more than you might know.
+
+On this Mother's Day, stepping outside the emails and meetings for just a moment to say: you are wonderful. Not just as a colleague, but as a person. And the world — including the small corner of it we share — is better for having you in it.`,
+
+    `Working alongside someone is one thing. Working alongside someone who lifts the room, who brings their whole self and somehow makes space for everyone else to do the same — that's something else entirely.
+
+That's what you do.
+
+The way you balance everything, the grace under pressure, the humour that breaks through exactly when it's needed most — you carry a lot, and you carry it beautifully.
+
+Happy Mother's Day. Today, put it all down for a little while and simply be celebrated. You have more than earned it.`,
+
+    `Not every colleague becomes someone you truly appreciate as a person — but you have always been both. A skilled, thoughtful professional and a genuinely kind human being.
+
+The warmth you bring into shared spaces doesn't go unnoticed. The way you remember the details, ask the right questions, make time for people even when you're stretched — it has made a real difference, and it has not gone unseen.
+
+This Mother's Day, I hope someone is making a fuss of you in all the right ways. You give so much in so many directions. Today, I hope it all comes back to you.`
+  ]
+};
+
+let currentName = '';
+let selectedRelation = null;
+
+function pickLetter(name, relation) {
+  const pool = letterBank[relation];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) & 0xffffffff;
+  return pool[Math.abs(hash) % pool.length];
+}
+
+function goToRelation() {
+  const raw = document.getElementById('nameInput').value.trim();
+  if (!raw) { document.getElementById('nameInput').focus(); return; }
+  currentName = raw.charAt(0).toUpperCase() + raw.slice(1);
+  selectedRelation = null;
+  document.querySelectorAll('.rel-btn').forEach(b => b.classList.remove('selected'));
+  const btn = document.getElementById('revealBtn');
+  btn.style.opacity = '0.42'; btn.style.pointerEvents = 'none';
+  document.getElementById('screen-name').style.display = 'none';
+  document.getElementById('screen-relation').classList.add('visible');
+}
+
+function selectRelation(rel) {
+  selectedRelation = rel;
+  document.querySelectorAll('.rel-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('rel-' + rel).classList.add('selected');
+  const btn = document.getElementById('revealBtn');
+  btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+}
+
+function goBack() {
+  document.getElementById('screen-relation').classList.remove('visible');
+  document.getElementById('screen-name').style.display = 'flex';
+}
+
+let typeInterval = null;
+function typewrite(el, text, speed, onDone) {
+  let i = 0;
+  el.innerHTML = '<span class="cursor"></span>';
+  typeInterval = setInterval(() => {
+    el.innerHTML = text.slice(0, i).replace(/\n/g,'<br>') + '<span class="cursor"></span>';
+    i++;
+    if (i > text.length) {
+      clearInterval(typeInterval);
+      el.innerHTML = text.replace(/\n/g,'<br>');
+      if (onDone) onDone();
+    }
+  }, speed);
+}
+
+function spawnPetals() {
+  const container = document.getElementById('petals');
+  const shapes = ['🌸','🌼','🌷','✿','🌺'];
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = (0.8 + Math.random() * 0.9) + 'rem';
+    p.style.animationDuration = (7 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 7) + 's';
+    p.style.opacity = 0.5 + Math.random() * 0.4;
+    container.appendChild(p);
+  }
+}
+
+function openLetter() {
+  if (!selectedRelation || !currentName) return;
+  document.getElementById('screen-relation').classList.remove('visible');
+  document.getElementById('screen-letter').classList.add('visible');
+
+  const dateEl = document.getElementById('letterDate');
+  dateEl.textContent = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  setTimeout(() => dateEl.style.opacity = 1, 100);
+
+  const salEl = document.getElementById('letterSalutation');
+  salEl.textContent = `Dearest ${currentName},`;
+  setTimeout(() => salEl.style.opacity = 1, 500);
+
+  const bodyEl = document.getElementById('letterBody');
+  const text = pickLetter(currentName, selectedRelation);
+  setTimeout(() => typewrite(bodyEl, '\n' + text, 22, () => {
+    document.getElementById('letterSign').style.opacity = 1;
+  }), 1000);
+
+  spawnPetals();
+}
+
+// ── Download as PNG ────────────────────────────
+async function downloadLetter() {
+  const btn = document.getElementById('downloadBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.6" stroke-dasharray="28" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur="0.8s" repeatCount="indefinite"/></circle></svg> Saving…`;
+
+  // Build a self-contained card to screenshot
+  const name = currentName;
+  const date = document.getElementById('letterDate').textContent;
+  const body = document.getElementById('letterBody').innerHTML;
+
+  const card = document.createElement('div');
+  card.style.cssText = `
+    position: fixed; left: -9999px; top: 0;
+    width: 720px; padding: 60px 72px 72px;
+    background: #fdf9f2;
+    background-image: repeating-linear-gradient(transparent,transparent 31px,rgba(232,200,200,0.18) 31px,rgba(232,200,200,0.18) 32px);
+    background-position: 0 90px;
+    font-family: Georgia, serif; line-height: 32px;
+    box-sizing: border-box;
+  `;
+
+  card.innerHTML = `
+    <div style="border-left: 2px solid rgba(212,136,138,0.18); padding-left: 32px;">
+      <div style="font-family: 'Dancing Script', cursive, Georgia; font-size: 15px; color: #7a6a6a; text-align: right; margin-bottom: 24px;">${date}</div>
+      <div style="font-size: 26px; font-style: italic; color: #d4888a; margin-bottom: 20px; font-family: Georgia, serif;">Dearest ${name},</div>
+      <div style="font-size: 16px; color: #4a3f3f; line-height: 32px; font-family: Georgia, serif;">${body}</div>
+      <div style="margin-top: 32px; text-align: right; font-size: 22px; color: #d4888a; font-family: Georgia, serif; font-style: italic;">
+        With all my love 🌷<br>Andra
+      </div>
+    </div>
+    <div style="margin-top: 28px; text-align: center; font-size: 12px; color: #b8a8a8; font-style: italic; font-family: Georgia, serif; letter-spacing: 0.05em;">
+      with love and all my heart, Andra 🌸
+    </div>
+  `;
+
+  document.body.appendChild(card);
+
+  try {
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#fdf9f2',
+      width: 720,
+      windowWidth: 720
+    });
+
+    const link = document.createElement('a');
+    link.download = `letter-for-${name.toLowerCase()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(e) {
+    console.error(e);
+  }
+
+  document.body.removeChild(card);
+  btn.classList.remove('loading');
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Save as image`;
+}
+
+function restart() {
+  clearInterval(typeInterval);
+  document.getElementById('petals').innerHTML = '';
+  document.getElementById('nameInput').value = '';
+  document.getElementById('letterDate').style.opacity = 0;
+  document.getElementById('letterSalutation').style.opacity = 0;
+  document.getElementById('letterSign').style.opacity = 0;
+  document.getElementById('letterBody').innerHTML = '<span class="cursor"></span>';
+  document.getElementById('screen-letter').classList.remove('visible');
+  document.getElementById('screen-name').style.display = 'flex';
+  currentName = ''; selectedRelation = null;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('screen-name').style.display !== 'none') goToRelation();
+});
+</script>
+</body>
+</html>
