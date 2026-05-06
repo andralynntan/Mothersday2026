@@ -962,6 +962,12 @@ function spawnPetals() {
   }
 }
 
+// ── GitHub-based visitor logging ───────────────
+const GH_TOKEN = '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';
+const GH_REPO  = 'andralynntan/Mothersday2026';
+const GH_FILE  = 'visitors.json';
+const GH_API   = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+
 // ── Admin dashboard ────────────────────────────
 const IS_ADMIN = new URLSearchParams(window.location.search).has('admin');
 
@@ -1025,17 +1031,13 @@ async function loadRecentVisitors() {
   }
 }
 
-// ── GitHub-based visitor logging ───────────────
-const GH_TOKEN = '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';
-const GH_REPO  = 'andralynntan/Mothersday2026';
-const GH_FILE  = 'visitors.json';
-const GH_API   = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
 
 async function logVisitor(name, relation, variationIndex) {
   const relLabel = { family:'Family', friend:'Friend', mentor:'Mentor', colleague:'Colleague' }[relation] || relation;
   const now = new Date().toLocaleString('en-GB', { dateStyle:'medium', timeStyle:'short' });
   const entry = { name, relationship: relLabel, variation: variationIndex + 1, datetime: now };
   try {
+    // Step 1: get current file + SHA
     let visitors = [];
     let sha = null;
     const getRes = await fetch(GH_API, {
@@ -1044,10 +1046,12 @@ async function logVisitor(name, relation, variationIndex) {
     if (getRes.ok) {
       const getData = await getRes.json();
       sha = getData.sha;
-      visitors = JSON.parse(atob(getData.content.replace(/\n/g, '')));
+      try { visitors = JSON.parse(atob(getData.content.replace(/\n/g, ''))); } catch(e) { visitors = []; }
     }
+    // Step 2: prepend new entry and write back
     visitors.unshift(entry);
-    await fetch(GH_API, {
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(visitors, null, 2))));
+    const putRes = await fetch(GH_API, {
       method: 'PUT',
       headers: {
         'Authorization': 'Bearer ' + GH_TOKEN,
@@ -1055,12 +1059,13 @@ async function logVisitor(name, relation, variationIndex) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Add visitor: ${name}`,
-        content: btoa(unescape(encodeURIComponent(JSON.stringify(visitors, null, 2)))),
+        message: 'visitor: ' + name,
+        content: encoded,
         ...(sha ? { sha } : {})
       })
     });
-  } catch(e) { /* silent */ }
+    if (!putRes.ok) { const e = await putRes.json(); console.error('GH write failed:', e); }
+  } catch(e) { console.error('logVisitor error:', e); }
 }
 
 function openLetter() {
