@@ -962,6 +962,114 @@ function spawnPetals() {
   }
 }
 
+// ── Admin dashboard ────────────────────────────
+const IS_ADMIN = new URLSearchParams(window.location.search).has('admin');
+
+function showAdminDashboard() {
+  document.getElementById('screen-name').style.display = 'none';
+  const dash = document.createElement('div');
+  dash.id = 'screen-admin';
+  dash.style.cssText = `
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:2rem; position:relative; z-index:1;
+  `;
+  dash.innerHTML = `
+    <div style="
+      background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
+      border:1.5px solid rgba(232,164,160,0.35); border-radius:24px;
+      padding:2.5rem 3rem; max-width:560px; width:100%; text-align:center;
+      box-shadow:0 8px 40px rgba(212,136,138,0.12);
+    ">
+      <div style="font-family:'Dancing Script',cursive; font-size:1.2rem; color:#d4888a; margin-bottom:0.4rem;">Your secret garden 🌿</div>
+      <h2 style="font-family:'Playfair Display',serif; font-weight:400; font-size:1.8rem; color:#4a3f3f; margin-bottom:0.6rem;">Letter Dashboard</h2>
+      <p style="font-family:'Lora',serif; font-style:italic; color:#7a6a6a; font-size:0.95rem; margin-bottom:2rem;">
+        Every time someone opens their letter, it's logged to your Notion database below.
+      </p>
+      <a href="https://www.notion.so/5334ea763b0a49d2ac0967c9968eeff6" target="_blank" style="
+        display:inline-block;
+        background:linear-gradient(135deg,#e8a4a0,#d4888a);
+        color:white; font-family:'Dancing Script',cursive;
+        font-size:1.3rem; text-decoration:none;
+        border-radius:50px; padding:0.75rem 2.4rem;
+        box-shadow:0 4px 20px rgba(212,136,138,0.3);
+      ">Open Notion Dashboard 🌸</a>
+      <div id="admin-log" style="
+        margin-top:2rem; text-align:left;
+        font-family:'Lora',serif; font-size:0.9rem; color:#7a6a6a;
+        max-height:300px; overflow-y:auto;
+        border-top:1px solid rgba(212,136,138,0.2); padding-top:1rem;
+      ">
+        <em>Loading recent visitors…</em>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dash);
+  loadRecentVisitors();
+}
+
+async function loadRecentVisitors() {
+  const logEl = document.getElementById('admin-log');
+  if (!logEl) return;
+  try {
+    const res = await fetch('https://api.notion.com/v1/databases/5334ea763b0a49d2ac0967c9968eeff6/query', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + NOTION_TOKEN,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sorts: [{ timestamp: 'created_time', direction: 'descending' }], page_size: 20 })
+    });
+    const data = await res.json();
+    if (!data.results || data.results.length === 0) {
+      logEl.innerHTML = '<em>No visitors yet — share your link! 🌷</em>';
+      return;
+    }
+    const relEmoji = { Family:'🌷', Friend:'🌸', Mentor:'🌿', Colleague:'🌼' };
+    logEl.innerHTML = data.results.map(p => {
+      const name = p.properties['Name']?.title?.[0]?.plain_text || '—';
+      const rel  = p.properties['Relationship']?.select?.name || '—';
+      const dt   = p.properties['Date & Time']?.rich_text?.[0]?.plain_text || '—';
+      const lv   = p.properties['Letter Variation']?.number ?? '—';
+      return `<div style="padding:0.5rem 0; border-bottom:1px solid rgba(212,136,138,0.12);">
+        ${relEmoji[rel] || '💌'} <strong>${name}</strong> &mdash; ${rel} &mdash; Variation ${lv}<br>
+        <span style="font-size:0.8rem; color:#b8a8a8;">${dt}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    logEl.innerHTML = '<em>Could not load — check Notion link above.</em>';
+  }
+}
+
+// ── Log visitor to Notion ──────────────────────
+const NOTION_TOKEN = 'YOUR_NOTION_INTEGRATION_TOKEN';
+const NOTION_DB_ID = '5334ea763b0a49d2ac0967c9968eeff6';
+
+async function logVisitor(name, relation, variationIndex) {
+  const relLabel = { family:'Family', friend:'Friend', mentor:'Mentor', colleague:'Colleague' }[relation] || relation;
+  const now = new Date().toLocaleString('en-GB', { dateStyle:'medium', timeStyle:'short' });
+  try {
+    await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + NOTION_TOKEN,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        parent: { database_id: NOTION_DB_ID },
+        properties: {
+          'Name':             { title:       [{ text: { content: name } }] },
+          'Relationship':     { select:      { name: relLabel } },
+          'Letter Variation': { number:      variationIndex + 1 },
+          'Date & Time':      { rich_text:   [{ text: { content: now } }] }
+        }
+      })
+    });
+  } catch(e) { /* silent — never interrupt the user experience */ }
+}
+
 function openLetter() {
   if (!selectedRelation || !currentName) return;
   document.getElementById('screen-relation').classList.remove('visible');
@@ -975,13 +1083,19 @@ function openLetter() {
   salEl.textContent = `Dearest ${currentName},`;
   setTimeout(() => salEl.style.opacity = 1, 500);
 
+  const pool = letterBank[selectedRelation];
+  let hash = 0;
+  for (let i = 0; i < currentName.length; i++) hash = (hash * 31 + currentName.charCodeAt(i)) & 0xffffffff;
+  const variationIndex = Math.abs(hash) % pool.length;
+
   const bodyEl = document.getElementById('letterBody');
-  const text = pickLetter(currentName, selectedRelation);
+  const text = pool[variationIndex];
   setTimeout(() => typewrite(bodyEl, '\n' + text, 22, () => {
     document.getElementById('letterSign').style.opacity = 1;
   }), 1000);
 
   spawnPetals();
+  logVisitor(currentName, selectedRelation, variationIndex);
 }
 
 // ── Download as PNG ────────────────────────────
@@ -1060,6 +1174,9 @@ function restart() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('screen-name').style.display !== 'none') goToRelation();
 });
+
+// Init admin last, after all functions are defined
+if (IS_ADMIN) showAdminDashboard();
 </script>
 </body>
 </html>
