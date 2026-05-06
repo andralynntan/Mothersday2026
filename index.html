@@ -984,16 +984,11 @@ function showAdminDashboard() {
       <div style="font-family:'Dancing Script',cursive; font-size:1.2rem; color:#d4888a; margin-bottom:0.4rem;">Your secret garden 🌿</div>
       <h2 style="font-family:'Playfair Display',serif; font-weight:400; font-size:1.8rem; color:#4a3f3f; margin-bottom:0.6rem;">Letter Dashboard</h2>
       <p style="font-family:'Lora',serif; font-style:italic; color:#7a6a6a; font-size:0.95rem; margin-bottom:2rem;">
-        Every time someone opens their letter, it's logged to your Notion database below.
+        Every time someone opens their letter, it's logged here automatically.
       </p>
-      <a href="https://www.notion.so/5334ea763b0a49d2ac0967c9968eeff6" target="_blank" style="
-        display:inline-block;
-        background:linear-gradient(135deg,#e8a4a0,#d4888a);
-        color:white; font-family:'Dancing Script',cursive;
-        font-size:1.3rem; text-decoration:none;
-        border-radius:50px; padding:0.75rem 2.4rem;
-        box-shadow:0 4px 20px rgba(212,136,138,0.3);
-      ">Open Notion Dashboard 🌸</a>
+      <p style="font-family:'Lora',serif; font-style:italic; color:#b8a8a8; font-size:0.82rem; margin-top:-1rem; margin-bottom:0.5rem;">
+        Visitors are logged live as they open their letters.
+      </p>
       <div id="admin-log" style="
         margin-top:2rem; text-align:left;
         font-family:'Lora',serif; font-size:0.9rem; color:#7a6a6a;
@@ -1012,62 +1007,60 @@ async function loadRecentVisitors() {
   const logEl = document.getElementById('admin-log');
   if (!logEl) return;
   try {
-    const res = await fetch('https://api.notion.com/v1/databases/5334ea763b0a49d2ac0967c9968eeff6/query', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + NOTION_TOKEN,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ sorts: [{ timestamp: 'created_time', direction: 'descending' }], page_size: 20 })
+    const res = await fetch(GH_API, {
+      headers: { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github+json' }
     });
+    if (!res.ok) { logEl.innerHTML = '<em>No visitors yet — share your link! 🌷</em>'; return; }
     const data = await res.json();
-    if (!data.results || data.results.length === 0) {
-      logEl.innerHTML = '<em>No visitors yet — share your link! 🌷</em>';
-      return;
-    }
+    const visitors = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    if (!visitors.length) { logEl.innerHTML = '<em>No visitors yet — share your link! 🌷</em>'; return; }
     const relEmoji = { Family:'🌷', Friend:'🌸', Mentor:'🌿', Colleague:'🌼' };
-    logEl.innerHTML = data.results.map(p => {
-      const name = p.properties['Name']?.title?.[0]?.plain_text || '—';
-      const rel  = p.properties['Relationship']?.select?.name || '—';
-      const dt   = p.properties['Date & Time']?.rich_text?.[0]?.plain_text || '—';
-      const lv   = p.properties['Letter Variation']?.number ?? '—';
-      return `<div style="padding:0.5rem 0; border-bottom:1px solid rgba(212,136,138,0.12);">
-        ${relEmoji[rel] || '💌'} <strong>${name}</strong> &mdash; ${rel} &mdash; Variation ${lv}<br>
-        <span style="font-size:0.8rem; color:#b8a8a8;">${dt}</span>
-      </div>`;
-    }).join('');
+    logEl.innerHTML = visitors.map(v => `
+      <div style="padding:0.5rem 0; border-bottom:1px solid rgba(212,136,138,0.12);">
+        ${relEmoji[v.relationship] || '💌'} <strong>${v.name}</strong> &mdash; ${v.relationship} &mdash; Variation ${v.variation}<br>
+        <span style="font-size:0.8rem; color:#b8a8a8;">${v.datetime}</span>
+      </div>`).join('');
   } catch(e) {
-    logEl.innerHTML = '<em>Could not load — check Notion link above.</em>';
+    logEl.innerHTML = '<em>No visitors yet — share your link! 🌷</em>';
   }
 }
 
-// ── Log visitor to Notion ──────────────────────
-const NOTION_TOKEN = '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';
-const NOTION_DB_ID = '5334ea763b0a49d2ac0967c9968eeff6';
+// ── GitHub-based visitor logging ───────────────
+const GH_TOKEN = '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';
+const GH_REPO  = 'andralynntan/Mothersday2026';
+const GH_FILE  = 'visitors.json';
+const GH_API   = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
 
 async function logVisitor(name, relation, variationIndex) {
   const relLabel = { family:'Family', friend:'Friend', mentor:'Mentor', colleague:'Colleague' }[relation] || relation;
   const now = new Date().toLocaleString('en-GB', { dateStyle:'medium', timeStyle:'short' });
+  const entry = { name, relationship: relLabel, variation: variationIndex + 1, datetime: now };
   try {
-    await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
+    let visitors = [];
+    let sha = null;
+    const getRes = await fetch(GH_API, {
+      headers: { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github+json' }
+    });
+    if (getRes.ok) {
+      const getData = await getRes.json();
+      sha = getData.sha;
+      visitors = JSON.parse(atob(getData.content.replace(/\n/g, '')));
+    }
+    visitors.unshift(entry);
+    await fetch(GH_API, {
+      method: 'PUT',
       headers: {
-        'Authorization': 'Bearer ' + NOTION_TOKEN,
-        'Notion-Version': '2022-06-28',
+        'Authorization': 'Bearer ' + GH_TOKEN,
+        'Accept': 'application/vnd.github+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        parent: { database_id: NOTION_DB_ID },
-        properties: {
-          'Name':             { title:       [{ text: { content: name } }] },
-          'Relationship':     { select:      { name: relLabel } },
-          'Letter Variation': { number:      variationIndex + 1 },
-          'Date & Time':      { rich_text:   [{ text: { content: now } }] }
-        }
+        message: `Add visitor: ${name}`,
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(visitors, null, 2)))),
+        ...(sha ? { sha } : {})
       })
     });
-  } catch(e) { /* silent — never interrupt the user experience */ }
+  } catch(e) { /* silent */ }
 }
 
 function openLetter() {
